@@ -1,0 +1,38 @@
+{
+  "name": "htmlcssify",
+  "version": "0.9.0",
+  "description": "browserify",
+  "main": "index.js",
+  "files": [
+    "fw",
+    "index.js"
+  ],
+  "scripts": {
+    "test": "node_modules/.bin/mocha test/spec.js"
+  },
+  "author": "Ivan Heral <ivanhernandezal@gmail.com>",
+  "license": "MIT",
+  "keywords": [
+    "htmlcssify",
+    "browserify"
+  ],
+  "repository": {
+    "type": "git",
+    "url": "git://github.com/ivaheral/htmlcssify.git"
+  },
+  "dependencies": {
+    "cssnano": "^4.1.10",
+    "html-minifier": "4.0.0",
+    "insert-css": "^2.0.0",
+    "less": "^3.9.0",
+    "node-sass": "^4.12.0",
+    "stylus": "^0.54.5",
+    "through2": "^3.0.1"
+  },
+  "devDependencies": {
+    "acorn": "^2.6.4",
+    "browserify": "~16.2.3",
+    "chai": "~4.2.0",
+    "mocha": "~6.1.4"
+  }
+}
