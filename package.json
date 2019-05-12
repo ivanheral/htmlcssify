@@ -4,7 +4,7 @@
   "description": "browserify",
   "main": "index.js",
   "files": [
-    "fw",
+    "lib",
     "index.js"
   ],
   "scripts": {
