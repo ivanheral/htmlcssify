@@ -8,7 +8,7 @@ function isHtmlCss(file) {
 module.exports = function (file, opts) {
 
   if (!isHtmlCss(file)) return through();
-  opts = opts || {};
+  opts = opts || {insert: false};
 
   var chunks = []
 
