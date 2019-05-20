@@ -1,5 +1,5 @@
 var through = require('through2');
-var procHtmlCss = require('./lib/compilers');
+var procHtmlCss = require('./lib');
 
 function isHtmlCss(file) {
   return /(\.html|\.css|\.less|\.scss|\.styl|\.sass)$/.test(file);
@@ -8,7 +8,10 @@ function isHtmlCss(file) {
 module.exports = function (file, opts) {
 
   if (!isHtmlCss(file)) return through();
-  opts = opts || {insert: false};
+  opts = opts || {
+    insert: false,
+    min: false
+  };
 
   var chunks = []
 
