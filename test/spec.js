@@ -1,14 +1,16 @@
 var browserify = require('browserify');
-var fs = require('fs');
 var acorn = require('acorn');
 var walk = require('acorn/dist/walk');
-var html2js = require('..');
+var htmlcss = require('..');
 
-describe('html', function () {
-  it('converts HTML into JS', function (done) {
-    var b = browserify('./fixture.html', { basedir: __dirname });
+describe('htmlcssify', function () {
 
-    b.transform(html2js);
+  it('html', function (done) {
+    var b = browserify('./fixture.html', {
+      basedir: __dirname
+    });
+
+    b.transform(htmlcss);
     b.bundle(function (err, bundle) {
       done(err || testExport(bundle, [
         '<!doctype html>',
@@ -23,35 +25,73 @@ describe('html', function () {
   });
 
   it('html-min', function (done) {
-    var b = browserify('./fixture.html', { basedir: __dirname });
+    var b = browserify('./fixture.html', {
+      basedir: __dirname
+    });
 
-    b.transform(html2js, { min: true });
+    b.transform(htmlcss, {
+      min: true
+    });
     b.bundle(function (err, bundle) {
       done(err || testExport(bundle, [
-        '<!doctype html>',
-        '<html>',
-        '<body class="bada">',
-        // Note: html-minifier replaces simple quotes around attributes with
-        // double quotes
-        '<h1 class="bing">dude! \\r \\n \\ \\\\ \\\\\\</h1>',
-
+        '<!doctype html><html><body class="bada"><h1 class="bing">dude! \\r \\n \\ \\\\ \\\\\\</h1>',
         '</body>',
         '</html>'
       ].join('')));
     });
   });
 
+  ['css', 'less', 'styl', 'scss'].map((elem) => {
+    it(elem, function (done) {
+      stylesExport(done, elem, false);
+    });
+
+    it(`${elem}-min`, function (done) {
+      stylesExport(done, elem, true);
+    });
+  })
+
+  function stylesExport(done, ext, val_min) {
+    var path = `./${ext}/app.${ext}`
+
+    var b = browserify(path, {
+      basedir: __dirname
+    });
+
+    var result = `p {\n    color: #f00;\n}`
+
+    switch (ext) {
+      case "less":
+      case "styl":
+        result = `p {\n  color: #f00;\n}\n`
+        break;
+      case "scss":
+        result = `p {\n  color: #f00; }\n`
+        break;
+    }
+
+    b.transform(htmlcss, {
+      insert: false,
+      min: val_min
+    });
+    b.bundle(function (err, bundle) {
+      done(err || testExport(bundle, val_min ? 'p{color:#f00;}' :
+        result));
+    });
+  }
+
   function testExport(bundle, expected) {
     var ast = acorn.parse(bundle);
-
     return !walk.findNodeAt(ast, null, null, function (type, node) {
-      if (type !== 'AssignmentExpression') { return; }
-      if (node.left.type !== 'MemberExpression') { return; }
-      if (node.left.object.name !== 'module') { return; }
-      if (node.left.property.name !== 'exports') { return; }
-      if (node.right.type !== 'Literal') { return; }
-      if (node.right.value !== expected) { return; }
-
+      if (type !== 'AssignmentExpression' ||
+        node.left.type !== 'MemberExpression' ||
+        node.left.object.name !== 'module' ||
+        node.left.property.name !== 'exports' ||
+        node.right.type !== 'Literal' ||
+        node.right.value !== expected
+      ) {
+        return;
+      }
       return true;
     }) && new Error('Unable to find exported string: ' + expected);
   }
