@@ -75,7 +75,7 @@ describe('htmlcssify', function () {
       min: val_min
     });
     b.bundle(function (err, bundle) {
-      done(err || testExport(bundle, val_min ? 'p{color:#f00;}' :
+      done(err || testExport(bundle, val_min ? 'p{color:red}' :
         result));
     });
   }
