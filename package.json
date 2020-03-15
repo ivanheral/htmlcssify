@@ -31,7 +31,7 @@
     "clean-css": "^4.2.1"
   },
   "devDependencies": {
-    "acorn": "^2.6.4",
+    "acorn": "^5.7.4",
     "browserify": "~16.2.3",
     "chai": "~4.2.0",
     "mocha": "~6.1.4"
