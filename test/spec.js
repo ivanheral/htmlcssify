@@ -1,6 +1,6 @@
 var browserify = require('browserify');
 var acorn = require('acorn');
-var walk = require('acorn/dist/walk');
+var walk = require('acorn-walk');
 var htmlcss = require('..');
 
 describe('htmlcssify', function () {
@@ -41,7 +41,7 @@ describe('htmlcssify', function () {
     });
   });
 
-  ['css', 'less', 'styl', 'scss'].map((elem) => {
+  ['css', 'less', 'styl', 'scss', 'postcss'].map((elem) => {
     it(elem, function (done) {
       stylesExport(done, elem, false);
     });
@@ -53,7 +53,8 @@ describe('htmlcssify', function () {
 
   function stylesExport(done, ext, val_min) {
     var path = `./${ext}/app.${ext}`
-
+    if (ext == 'postcss')
+      path = `./postcss/app.scss`;
     var b = browserify(path, {
       basedir: __dirname
     });
@@ -68,6 +69,9 @@ describe('htmlcssify', function () {
       case "scss":
         result = `p {\n  color: #f00; }\n`
         break;
+      case "postcss":
+        result = 'a {\n  border-radius: 5px; }\n'
+        break
     }
 
     b.transform(htmlcss, {
@@ -75,8 +79,12 @@ describe('htmlcssify', function () {
       min: val_min
     });
     b.bundle(function (err, bundle) {
-      done(err || testExport(bundle, val_min ? 'p{color:red}' :
-        result));
+      var solution = val_min ? 'p{color:red}' :
+        result;
+      if (ext == "postcss" && val_min) {
+        solution = 'a{border-radius:5px}'
+      }
+      done(err || testExport(bundle, solution));
     });
   }
 
