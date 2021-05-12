@@ -32,7 +32,7 @@
     "insert-css": "^2.0.0",
     "less": "^3.11.3",
     "node-sass": "^4.14.1",
-    "postcss": "^7.0.32",
+    "postcss": "^8.2.10",
     "stylus": "^0.54.7",
     "through2": "^3.0.1"
   },
